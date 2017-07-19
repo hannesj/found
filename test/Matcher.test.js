@@ -242,6 +242,34 @@ describe('Matcher', () => {
         params: { 0: 'qux/a', quux: 'a' },
       });
     });
+
+    it('should waterfall past groups', () => {
+      const matcher = new Matcher([{
+        path: 'foo',
+        children: [
+          {
+            path: 'bar',
+            groups: {
+              nav: [{ path: '*' }],
+              main: [{ path: 'baz' }],
+            },
+          },
+          {
+            path: 'bar',
+            groups: {
+              nav: [{ path: '*' }],
+              main: [{ path: 'qux' }],
+            },
+          },
+        ],
+      }]);
+
+      expect(matcher.match({
+        pathname: '/foo/bar/qux',
+      })).toMatchObject({
+        routeIndices: [0, 1, { nav: [0], main: [0] }],
+      });
+    });
   });
 
   describe('#joinPaths', () => {

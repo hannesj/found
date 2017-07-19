@@ -217,17 +217,11 @@ describe('Matcher', () => {
             path: 'bar',
             groups: {
               nav: [
-                {
-                  path: '*',
-                },
+                { path: '*' },
               ],
               main: [
-                {
-                  path: 'baz',
-                },
-                {
-                  path: 'qux/:quux',
-                },
+                { path: 'baz' },
+                { path: 'qux/:quux' },
               ],
             },
           },
@@ -250,24 +244,33 @@ describe('Matcher', () => {
           {
             path: 'bar',
             groups: {
-              nav: [{ path: '*' }],
-              main: [{ path: 'baz' }],
+              nav: [
+                { path: '*' },
+              ],
+              main: [
+                { path: 'baz' },
+              ],
             },
           },
           {
             path: 'bar',
             groups: {
-              nav: [{ path: '*' }],
-              main: [{ path: 'qux' }],
+              nav: [
+                { path: '*' },
+              ],
+              main: [
+                { path: 'qux' },
+                { path: 'quux' },
+              ],
             },
           },
         ],
       }]);
 
       expect(matcher.match({
-        pathname: '/foo/bar/qux',
+        pathname: '/foo/bar/quux',
       })).toMatchObject({
-        routeIndices: [0, 1, { nav: [0], main: [0] }],
+        routeIndices: [0, 1, { nav: [0], main: [1] }],
       });
     });
   });

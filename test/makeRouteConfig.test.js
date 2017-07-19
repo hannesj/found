@@ -4,12 +4,19 @@ import makeRouteConfig from '../src/makeRouteConfig';
 import Redirect from '../src/Redirect';
 import Route from '../src/Route';
 
-const AppPage = () => {};
-const MainPage = () => {};
-const FooPage = () => {};
-const BarPage = () => {};
-
 describe('makeRouteConfig', () => {
+  const AppPage = () => {};
+
+  const MainPage = () => {};
+  const FooPage = () => {};
+  const BarPage = () => {};
+
+  const FooNav = () => {};
+  const FooA = () => {};
+  const FooB = () => {};
+  const BarNav = () => {};
+  const BarMain = () => {};
+
   it('should work with a route', () => {
     expect(makeRouteConfig(
       <Route path="/" Component={AppPage} />,
@@ -75,5 +82,81 @@ describe('makeRouteConfig', () => {
         ],
       }),
     ]);
+  });
+
+  it('should work with route groups', () => {
+    expect(makeRouteConfig(
+      <Route path="/" Component={AppPage}>
+        <Route
+          path="foo"
+          groups={{
+            nav: (
+              <Route Component={FooNav}>
+                <Route path="*" />
+              </Route>
+            ),
+            main: [
+              <Route path="a" Component={FooA} />,
+              <Route path="b" Component={FooB} />,
+            ],
+          }}
+        />
+        <Route
+          path="bar"
+          groups={{
+            nav: (
+              <Route Component={BarNav}>
+                <Route path="*" />
+              </Route>
+            ),
+            main: (
+              <Route Component={BarMain} />
+            ),
+          }}
+        />
+      </Route>,
+    )).toEqual([{
+      path: '/',
+      Component: AppPage,
+      children: [
+        {
+          path: 'foo',
+          groups: {
+            nav: [
+              {
+                Component: FooNav,
+                children: [{ path: '*' }],
+              },
+            ],
+            main: [
+              {
+                path: 'a',
+                Component: FooA,
+              },
+              {
+                path: 'b',
+                Component: FooB,
+              },
+            ],
+          },
+        },
+        {
+          path: 'bar',
+          groups: {
+            nav: [
+              {
+                Component: BarNav,
+                children: [{ path: '*' }],
+              },
+            ],
+            main: [
+              {
+                Component: BarMain,
+              },
+            ],
+          },
+        },
+      ],
+    }]);
   });
 });

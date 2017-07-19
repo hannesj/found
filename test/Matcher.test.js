@@ -208,6 +208,42 @@ describe('Matcher', () => {
     });
   });
 
+  describe('route groups', () => {
+    it('should support route groups', () => {
+      const matcher = new Matcher([{
+        path: 'foo',
+        children: [
+          {
+            path: 'bar',
+            groups: {
+              nav: [
+                {
+                  path: '*',
+                },
+              ],
+              main: [
+                {
+                  path: 'baz',
+                },
+                {
+                  path: 'qux/:quux',
+                },
+              ],
+            },
+          },
+        ],
+      }]);
+
+      expect(matcher.match({
+        pathname: '/foo/bar/qux/a',
+      })).toEqual({
+        routeIndices: [0, 0, { nav: [0], main: [1] }],
+        routeParams: [{}, {}, { 0: 'qux/a' }, { quux: 'a' }],
+        params: { 0: 'qux/a', quux: 'a' },
+      });
+    });
+  });
+
   describe('#joinPaths', () => {
     const matcher = new Matcher();
 

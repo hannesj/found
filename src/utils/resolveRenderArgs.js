@@ -1,5 +1,27 @@
 import HttpError from '../HttpError';
 
+function foldElements(elementsRaw, routeIndices) {
+  const elements = [];
+
+  for (const routeIndex of routeIndices) {
+    if (typeof routeIndex === 'object') {
+      const groupElements = {};
+      Object.entries(routeIndex).forEach(([groupName, groupRouteIndices]) => {
+        groupElements[groupName] = foldElements(
+          elementsRaw, groupRouteIndices,
+        );
+      });
+
+      elements.push(groupElements);
+    } else {
+      // We intentionally modify elementsRaw, to support groups.
+      elements.push(elementsRaw.shift());
+    }
+  }
+
+  return elements;
+}
+
 export default async function* resolveRenderArgs({
   router, match, matchContext, resolver,
 }) {
@@ -23,7 +45,10 @@ export default async function* resolveRenderArgs({
     // ESLint doesn't handle for-await yet.
     // eslint-disable-next-line semi
     for await (const elements of resolver.resolveElements(augmentedMatch)) {
-      yield { ...augmentedMatch, elements };
+      yield {
+        ...augmentedMatch,
+        elements: foldElements([...elements], match.routeIndices),
+      };
     }
   } catch (e) {
     if (e instanceof HttpError) {

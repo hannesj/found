@@ -381,8 +381,8 @@ const route = {
       groups: {
         nav: [
           {
+            path: '(.*)?',
             Component: FooNav,
-            children: [{ path: '*' }],
           },
         ],
         main: [
@@ -402,8 +402,8 @@ const route = {
       groups: {
         nav: [
           {
+            path: '(.*)?',
             Component: BarNav,
-            children: [{ path: '*' }],
           },
         ],
         main: [
@@ -422,9 +422,7 @@ const jsxRoute = (
       path="foo"
       groups={{
         nav: (
-          <Route Component={FooNav}>
-            <Route path="*" />
-          </Route>
+          <Route path="(.*)?" Component={FooNav}>
         ),
         main: [
           <Route path="a" Component={FooA} />,
@@ -436,9 +434,7 @@ const jsxRoute = (
       path="bar"
       groups={{
         nav: (
-          <Route Component={BarNav}>
-            <Route path="*" />
-          </Route>
+          <Route path="(.*)?" Component={BarNav}>
         ),
         main: (
           <Route Component={BarMain} />

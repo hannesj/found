@@ -67,8 +67,8 @@ describe('render', () => {
               groups: {
                 nav: [
                   {
+                    path: '(.*)?',
                     Component: () => <div className="bar-nav" />,
-                    children: [{ path: '*' }],
                   },
                 ],
                 main: [

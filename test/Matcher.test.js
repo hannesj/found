@@ -148,7 +148,10 @@ describe('Matcher', () => {
 
       expect(matcher.match({
         pathname: '/a',
-      })).toMatchObject({
+      })).toEqual({
+        routeIndices: [
+          0,
+        ],
         routeParams: [
           { foo: 'a' },
         ],
@@ -159,7 +162,54 @@ describe('Matcher', () => {
 
       expect(matcher.match({
         pathname: '/a/b/c',
-      })).toMatchObject({
+      })).toEqual({
+        routeIndices: [
+          0,
+          0,
+        ],
+        routeParams: [
+          { foo: 'a' },
+          { 0: 'b/c' },
+        ],
+        params: {
+          foo: 'a',
+          0: 'b/c',
+        },
+      });
+    });
+
+    it('should support optional path params', () => {
+      const matcher = new Matcher([{
+        path: ':foo',
+        children: [{
+          path: '(.*)?',
+        }],
+      }]);
+
+      expect(matcher.match({
+        pathname: '/a',
+      })).toEqual({
+        routeIndices: [
+          0,
+          0,
+        ],
+        routeParams: [
+          { foo: 'a' },
+          { 0: undefined },
+        ],
+        params: {
+          foo: 'a',
+          0: undefined,
+        },
+      });
+
+      expect(matcher.match({
+        pathname: '/a/b/c',
+      })).toEqual({
+        routeIndices: [
+          0,
+          0,
+        ],
         routeParams: [
           { foo: 'a' },
           { 0: 'b/c' },
@@ -217,7 +267,7 @@ describe('Matcher', () => {
             path: 'bar',
             groups: {
               nav: [
-                { children: [{ path: '*' }] },
+                { path: '(.*)?' },
               ],
               main: [
                 { path: 'baz' },
@@ -231,8 +281,8 @@ describe('Matcher', () => {
       expect(matcher.match({
         pathname: '/foo/bar/qux/a',
       })).toEqual({
-        routeIndices: [0, 0, { nav: [0, 0], main: [1] }],
-        routeParams: [{}, {}, {}, { 0: 'qux/a' }, { quux: 'a' }],
+        routeIndices: [0, 0, { nav: [0], main: [1] }],
+        routeParams: [{}, {}, { 0: 'qux/a' }, { quux: 'a' }],
         params: { 0: 'qux/a', quux: 'a' },
       });
     });
@@ -245,7 +295,7 @@ describe('Matcher', () => {
             path: 'bar',
             groups: {
               nav: [
-                { children: [{ path: '*' }] },
+                { path: '(.*)?' },
               ],
               main: [
                 { path: 'baz' },
@@ -256,7 +306,7 @@ describe('Matcher', () => {
             path: 'bar',
             groups: {
               nav: [
-                { children: [{ path: '*' }] },
+                { path: '(.*)?' },
               ],
               main: [
                 { path: 'qux' },
@@ -270,7 +320,7 @@ describe('Matcher', () => {
       expect(matcher.match({
         pathname: '/foo/bar/quux',
       })).toMatchObject({
-        routeIndices: [0, 1, { nav: [0, 0], main: [1] }],
+        routeIndices: [0, 1, { nav: [0], main: [1] }],
       });
     });
   });

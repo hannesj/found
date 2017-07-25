@@ -91,9 +91,7 @@ describe('makeRouteConfig', () => {
           path="foo"
           groups={{
             nav: (
-              <Route Component={FooNav}>
-                <Route path="*" />
-              </Route>
+              <Route path="(.*)?" Component={FooNav} />
             ),
             main: [
               <Route path="a" Component={FooA} />,
@@ -105,9 +103,7 @@ describe('makeRouteConfig', () => {
           path="bar"
           groups={{
             nav: (
-              <Route Component={BarNav}>
-                <Route path="*" />
-              </Route>
+              <Route path="(.*)?" Component={BarNav} />
             ),
             main: (
               <Route Component={BarMain} />
@@ -124,8 +120,8 @@ describe('makeRouteConfig', () => {
           groups: {
             nav: [
               {
+                path: '(.*)?',
                 Component: FooNav,
-                children: [{ path: '*' }],
               },
             ],
             main: [
@@ -145,8 +141,8 @@ describe('makeRouteConfig', () => {
           groups: {
             nav: [
               {
+                path: '(.*)?',
                 Component: BarNav,
-                children: [{ path: '*' }],
               },
             ],
             main: [

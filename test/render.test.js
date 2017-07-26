@@ -49,7 +49,7 @@ describe('render', () => {
     expect(bazNode.textContent).toBe('a');
   });
 
-  it('should support route groups', async () => {
+  it('should support named child routes', async () => {
     const instance = await render(
       '/foo/bar/qux/a',
       [
@@ -64,7 +64,7 @@ describe('render', () => {
           children: [
             {
               path: 'bar',
-              groups: {
+              children: {
                 nav: [
                   {
                     path: '(.*)?',

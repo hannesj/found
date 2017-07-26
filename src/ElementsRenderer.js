@@ -20,7 +20,7 @@ function accumulateElement(children, element) {
   }
 
   if (!React.isValidElement(children)) {
-    // Children come from a route group.
+    // Children come from named child routes.
     const groups = {};
     Object.entries(children).forEach(([groupName, groupElements]) => {
       groups[groupName] = groupElements.reduceRight(

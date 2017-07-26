@@ -6,20 +6,20 @@ import React from 'react';
 export default function makeRouteConfig(node) {
   return React.Children.toArray(node)
     .filter(React.isValidElement)
-    .map(({ type: Type, props: { children, groups, ...props } }) => {
+    .map(({ type: Type, props: { children, ...props } }) => {
       const route = new Type(props);
 
       if (children) {
-        route.children = makeRouteConfig(children);
-      }
+        if (React.isValidElement(children) || Array.isArray(children)) {
+          route.children = makeRouteConfig(children);
+        } else {
+          const routeGroups = {};
+          Object.entries(children).forEach(([groupName, groupRoutes]) => {
+            routeGroups[groupName] = makeRouteConfig(groupRoutes);
+          });
 
-      if (groups) {
-        const routeGroups = {};
-        Object.entries(groups).forEach(([groupName, groupRoutes]) => {
-          routeGroups[groupName] = makeRouteConfig(groupRoutes);
-        });
-
-        route.groups = routeGroups;
+          route.children = routeGroups;
+        }
       }
 
       return route;

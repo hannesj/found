@@ -30,7 +30,7 @@ export default class Matcher {
       return null;
     }
 
-    return this.getRoutesFromIndices(routeIndices, this.routeConfig, null);
+    return this.getRoutesFromIndices(routeIndices, this.routeConfig);
   }
 
   joinPaths(basePath, path) {
@@ -71,18 +71,19 @@ export default class Matcher {
       }
 
       const { params, remaining } = match;
+      const { children } = route;
 
-      if (route.groups) {
-        const groups = this.matchGroups(route.groups, remaining);
-        if (groups) {
-          return [{ index, params }, { groups }];
-        }
-      }
-
-      if (route.children) {
-        const childMatches = this.matchRoutes(route.children, remaining);
-        if (childMatches) {
-          return [{ index, params }, ...childMatches];
+      if (children) {
+        if (Array.isArray(children)) {
+          const childMatches = this.matchRoutes(children, remaining);
+          if (childMatches) {
+            return [{ index, params }, ...childMatches];
+          }
+        } else {
+          const groups = this.matchGroups(children, remaining);
+          if (groups) {
+            return [{ index, params }, { groups }];
+          }
         }
       }
 
@@ -194,7 +195,7 @@ export default class Matcher {
     };
   }
 
-  getRoutesFromIndices(routeIndices, routeConfig, groups) {
+  getRoutesFromIndices(routeIndices, routeConfigOrGroups) {
     const routeIndex = routeIndices[0];
 
     if (typeof routeIndex === 'object') {
@@ -203,14 +204,14 @@ export default class Matcher {
       const groupRoutes = [];
       Object.entries(routeIndex).forEach(([groupName, groupRouteIndices]) => {
         groupRoutes.push(...this.getRoutesFromIndices(
-          groupRouteIndices, groups[groupName], null,
+          groupRouteIndices, routeConfigOrGroups[groupName],
         ));
       });
 
       return groupRoutes;
     }
 
-    const route = routeConfig[routeIndex];
+    const route = routeConfigOrGroups[routeIndex];
 
     if (routeIndices.length === 1) {
       return [route];
@@ -221,7 +222,6 @@ export default class Matcher {
       ...this.getRoutesFromIndices(
         routeIndices.slice(1),
         route.children,
-        route.groups,
       ),
     ];
   }

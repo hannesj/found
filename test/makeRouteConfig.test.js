@@ -84,12 +84,11 @@ describe('makeRouteConfig', () => {
     ]);
   });
 
-  it('should work with route groups', () => {
+  it('should work with named child routes', () => {
     expect(makeRouteConfig(
       <Route path="/" Component={AppPage}>
-        <Route
-          path="foo"
-          groups={{
+        <Route path="foo">
+          {{
             nav: (
               <Route path="(.*)?" Component={FooNav} />
             ),
@@ -98,10 +97,9 @@ describe('makeRouteConfig', () => {
               <Route path="b" Component={FooB} />,
             ],
           }}
-        />
-        <Route
-          path="bar"
-          groups={{
+        </Route>
+        <Route path="bar">
+          {{
             nav: (
               <Route path="(.*)?" Component={BarNav} />
             ),
@@ -109,7 +107,7 @@ describe('makeRouteConfig', () => {
               <Route Component={BarMain} />
             ),
           }}
-        />
+        </Route>
       </Route>,
     )).toEqual([{
       path: '/',
@@ -117,7 +115,7 @@ describe('makeRouteConfig', () => {
       children: [
         {
           path: 'foo',
-          groups: {
+          children: {
             nav: [
               {
                 path: '(.*)?',
@@ -138,7 +136,7 @@ describe('makeRouteConfig', () => {
         },
         {
           path: 'bar',
-          groups: {
+          children: {
             nav: [
               {
                 path: '(.*)?',

@@ -258,14 +258,14 @@ describe('Matcher', () => {
     });
   });
 
-  describe('route groups', () => {
-    it('should support route groups', () => {
+  describe('named child routes', () => {
+    it('should support named child routes', () => {
       const matcher = new Matcher([{
         path: 'foo',
         children: [
           {
             path: 'bar',
-            groups: {
+            children: {
               nav: [
                 { path: '(.*)?' },
               ],
@@ -293,7 +293,7 @@ describe('Matcher', () => {
         children: [
           {
             path: 'bar',
-            groups: {
+            children: {
               nav: [
                 { path: '(.*)?' },
               ],
@@ -304,7 +304,7 @@ describe('Matcher', () => {
           },
           {
             path: 'bar',
-            groups: {
+            children: {
               nav: [
                 { path: '(.*)?' },
               ],

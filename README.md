@@ -207,8 +207,7 @@ A route object under the default matching algorithm and route element resolver c
 - `Component` or `getComponent`: the component for the route, or a method that returns the component for the route
 - `data` or `getData`: additional data for the route, or a method that returns additional data for the route
 - `render`: a method that returns the element for the route
-- `children`: an array of child route objects; if using JSX configuration components, this comes from the JSX children
-- `groups`: an object of route configs, for specifying named child routes
+- `children`: an array of child route objects, or an object of those arrays; if using JSX configuration components, this comes from the JSX children
 
 A route configuration consists of an array of route objects. You can generate such an array of route objects from JSX with `<Route>` elements using `makeRouteConfig`.
 
@@ -354,9 +353,9 @@ function render({ Component, props }) {
 
 If any matched routes have unresolved asynchronous component or data dependencies, the router will initially attempt to render all such routes in their loading state. If those routes all implement `render` methods and return non-`undefined` values from their `render` methods, the router will render the matched routes in their loading states. Otherwise, the router will continue to render the previous set of routes until all asynchronous dependencies resolve.
 
-#### `groups`
+#### Named child routes
 
-Specify the `groups` property on a route to set up named child routes. A route with named child routes will match only if every route group matches. The elements corresponding to the child routes will be available on their parent as props with the same name as the route groups.
+Specify an object for the `children` property on a route to set up named child routes. A route with named child routes will match only if every route group matches. The elements corresponding to the child routes will be available on their parent as props with the same name as the route groups.
 
 ```js
 function AppPage({ nav, main }) {
@@ -378,7 +377,7 @@ const route = {
   children: [
     {
       path: 'foo',
-      groups: {
+      children: {
         nav: [
           {
             path: '(.*)?',
@@ -399,7 +398,7 @@ const route = {
     },
     {
       path: 'bar',
-      groups: {
+      children: {
         nav: [
           {
             path: '(.*)?',
@@ -418,34 +417,30 @@ const route = {
 
 const jsxRoute = (
   <Route path="/" Component={AppPage}>
-    <Route
-      path="foo"
-      groups={{
+    <Route path="foo">
+      {{
         nav: (
-          <Route path="(.*)?" Component={FooNav}>
+          <Route path="(.*)?" Component={FooNav} />
         ),
         main: [
           <Route path="a" Component={FooA} />,
           <Route path="b" Component={FooB} />,
         ],
       }}
-    />
-    <Route
-      path="bar"
-      groups={{
+    </Route>
+    <Route path="bar">
+      {{
         nav: (
-          <Route path="(.*)?" Component={BarNav}>
+          <Route path="(.*)?" Component={BarNav} />
         ),
         main: (
           <Route Component={BarMain} />
         ),
       }}
-    />
+    </Route>
   </Route>
 );
 ```
-
-You cannot specify both `groups` and `children` on a route. If you want to inject `children` along with named child routes, use a group named `children`.
 
 #### Redirects
 
